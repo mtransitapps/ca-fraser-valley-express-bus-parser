@@ -19,6 +19,7 @@ import org.mtransit.parser.mt.data.MTrip;
 
 // http://bctransit.com/*/footer/open-data
 // http://bctransit.com/servlet/bctransit/data/GTFS.zip
+// http://bct2.baremetal.com:8080/GoogleTransit/BCTransit/google_transit.zip
 public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -35,15 +36,20 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public void start(String[] args) {
-		System.out.printf("Generating Fraser Valley Express bus data...\n");
+		System.out.printf("\nGenerating Fraser Valley Express bus data...");
 		long start = System.currentTimeMillis();
 		this.serviceIds = extractUsefulServiceIds(args, this);
 		super.start(args);
-		System.out.printf("Generating Fraser Valley Express bus data... DONE in %s.\n", Utils.getPrettyDuration(System.currentTimeMillis() - start));
+		System.out.printf("\nGenerating Fraser Valley Express bus data... DONE in %s.\n", Utils.getPrettyDuration(System.currentTimeMillis() - start));
 	}
+
+	private static final String INCLUDE_ONLY_SERVICE_ID_CONTAINS = "FVX";
 
 	@Override
 	public boolean excludeCalendar(GCalendar gCalendar) {
+		if (INCLUDE_ONLY_SERVICE_ID_CONTAINS != null && !gCalendar.service_id.contains(INCLUDE_ONLY_SERVICE_ID_CONTAINS)) {
+			return true;
+		}
 		if (this.serviceIds != null) {
 			return excludeUselessCalendar(gCalendar, this.serviceIds);
 		}
@@ -52,6 +58,9 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public boolean excludeCalendarDate(GCalendarDate gCalendarDates) {
+		if (INCLUDE_ONLY_SERVICE_ID_CONTAINS != null && !gCalendarDates.service_id.contains(INCLUDE_ONLY_SERVICE_ID_CONTAINS)) {
+			return true;
+		}
 		if (this.serviceIds != null) {
 			return excludeUselessCalendarDate(gCalendarDates, this.serviceIds);
 		}
@@ -70,6 +79,9 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public boolean excludeTrip(GTrip gTrip) {
+		if (INCLUDE_ONLY_SERVICE_ID_CONTAINS != null && !gTrip.service_id.contains(INCLUDE_ONLY_SERVICE_ID_CONTAINS)) {
+			return true;
+		}
 		if (this.serviceIds != null) {
 			return excludeUselessTrip(gTrip, this.serviceIds);
 		}
@@ -122,7 +134,6 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 		return super.getRouteColor(gRoute);
 	}
 
-	private static final String EXCHANGE_SHORT = "Ex";
 
 	@Override
 	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
@@ -139,8 +150,9 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 		System.exit(-1);
 	}
 
-	private static final Pattern EXCHANGE = Pattern.compile("(exchange)", Pattern.CASE_INSENSITIVE);
-	private static final String EXCHANGE_REPLACEMENT = EXCHANGE_SHORT;
+	private static final String EXCH = "Exch";
+	private static final Pattern EXCHANGE = Pattern.compile("((^|\\W){1}(exchange)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final String EXCHANGE_REPLACEMENT = "$2" + EXCH + "$4";
 
 	private static final Pattern STARTS_WITH_NUMBER = Pattern.compile("(^[\\d]+[\\S]*)", Pattern.CASE_INSENSITIVE);
 
@@ -165,6 +177,7 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 		tripHeadsign = CLEAN_P2.matcher(tripHeadsign).replaceAll(CLEAN_P2_REPLACEMENT);
 		tripHeadsign = STARTS_WITH_NUMBER.matcher(tripHeadsign).replaceAll(StringUtils.EMPTY);
 		tripHeadsign = MSpec.cleanStreetTypes(tripHeadsign);
+		tripHeadsign = MSpec.cleanNumbers(tripHeadsign);
 		return MSpec.cleanLabel(tripHeadsign);
 	}
 
@@ -179,6 +192,7 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 		gStopName = AT.matcher(gStopName).replaceAll(AT_REPLACEMENT);
 		gStopName = EXCHANGE.matcher(gStopName).replaceAll(EXCHANGE_REPLACEMENT);
 		gStopName = MSpec.cleanStreetTypes(gStopName);
+		gStopName = MSpec.cleanNumbers(gStopName);
 		return MSpec.cleanLabel(gStopName);
 	}
 }
