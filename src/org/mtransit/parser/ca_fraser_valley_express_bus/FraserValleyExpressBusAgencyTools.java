@@ -47,7 +47,7 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public boolean excludeCalendar(GCalendar gCalendar) {
-		if (INCLUDE_ONLY_SERVICE_ID_CONTAINS != null && !gCalendar.service_id.contains(INCLUDE_ONLY_SERVICE_ID_CONTAINS)) {
+		if (INCLUDE_ONLY_SERVICE_ID_CONTAINS != null && !gCalendar.getServiceId().contains(INCLUDE_ONLY_SERVICE_ID_CONTAINS)) {
 			return true;
 		}
 		if (this.serviceIds != null) {
@@ -58,7 +58,7 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public boolean excludeCalendarDate(GCalendarDate gCalendarDates) {
-		if (INCLUDE_ONLY_SERVICE_ID_CONTAINS != null && !gCalendarDates.service_id.contains(INCLUDE_ONLY_SERVICE_ID_CONTAINS)) {
+		if (INCLUDE_ONLY_SERVICE_ID_CONTAINS != null && !gCalendarDates.getServiceId().contains(INCLUDE_ONLY_SERVICE_ID_CONTAINS)) {
 			return true;
 		}
 		if (this.serviceIds != null) {
@@ -71,7 +71,7 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public boolean excludeRoute(GRoute gRoute) {
-		if (!INCLUDE_AGENCY_ID.equals(gRoute.agency_id)) {
+		if (!INCLUDE_AGENCY_ID.equals(gRoute.getAgencyId())) {
 			return true;
 		}
 		return super.excludeRoute(gRoute);
@@ -79,7 +79,7 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public boolean excludeTrip(GTrip gTrip) {
-		if (INCLUDE_ONLY_SERVICE_ID_CONTAINS != null && !gTrip.service_id.contains(INCLUDE_ONLY_SERVICE_ID_CONTAINS)) {
+		if (INCLUDE_ONLY_SERVICE_ID_CONTAINS != null && !gTrip.getServiceId().contains(INCLUDE_ONLY_SERVICE_ID_CONTAINS)) {
 			return true;
 		}
 		if (this.serviceIds != null) {
@@ -95,13 +95,13 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public long getRouteId(GRoute gRoute) {
-		return Long.parseLong(gRoute.route_short_name); // use route short name as route ID
+		return Long.parseLong(gRoute.getRouteShortName()); // use route short name as route ID
 	}
 
 	@Override
 	public String getRouteLongName(GRoute gRoute) {
-		String routeLongName = gRoute.route_long_name;
-		routeLongName = CleanUtils.CLEAN_SLASHES.matcher(routeLongName).replaceAll(CleanUtils.CLEAN_SLASHES_REPLACEMENT);
+		String routeLongName = gRoute.getRouteLongName();
+		routeLongName = CleanUtils.cleanSlashes(routeLongName);
 		routeLongName = CleanUtils.cleanNumbers(routeLongName);
 		routeLongName = CleanUtils.cleanStreetTypes(routeLongName);
 		return CleanUtils.cleanLabel(routeLongName);
@@ -119,8 +119,8 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String getRouteColor(GRoute gRoute) {
-		if (StringUtils.isEmpty(gRoute.route_color)) {
-			int rsn = Integer.parseInt(gRoute.route_short_name);
+		if (StringUtils.isEmpty(gRoute.getRouteColor())) {
+			int rsn = Integer.parseInt(gRoute.getRouteShortName());
 			switch (rsn) {
 			// @formatter:off
 			case 66: return AGENCY_COLOR_BLUE;
@@ -138,10 +138,10 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
 		if (mRoute.id == 66l) {
-			if (gTrip.direction_id == 0) {
+			if (gTrip.getDirectionId() == 0) {
 				mTrip.setHeadsignDirection(MDirectionType.EAST);
 				return;
-			} else if (gTrip.direction_id == 1) {
+			} else if (gTrip.getDirectionId() == 1) {
 				mTrip.setHeadsignDirection(MDirectionType.WEST);
 				return;
 			}
