@@ -17,9 +17,8 @@ import org.mtransit.parser.mt.data.MRoute;
 import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.mt.data.MTrip;
 
-// http://bctransit.com/*/footer/open-data
-// http://bctransit.com/servlet/bctransit/data/GTFS.zip
-// http://bct2.baremetal.com:8080/GoogleTransit/BCTransit/google_transit.zip
+// https://bctransit.com/*/footer/open-data
+// https://bctransit.com/servlet/bctransit/data/GTFS - FVX
 public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -41,6 +40,11 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 		this.serviceIds = extractUsefulServiceIds(args, this, true);
 		super.start(args);
 		System.out.printf("\nGenerating Fraser Valley Express bus data... DONE in %s.\n", Utils.getPrettyDuration(System.currentTimeMillis() - start));
+	}
+
+	@Override
+	public boolean excludingAll() {
+		return this.serviceIds != null && this.serviceIds.isEmpty();
 	}
 
 	private static final String INCLUDE_ONLY_SERVICE_ID_CONTAINS = "FVX";
@@ -134,16 +138,17 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 		return super.getRouteColor(gRoute);
 	}
 
-
 	@Override
 	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
-		if (mRoute.getId() == 66l) {
-			if (gTrip.getDirectionId() == 0) {
-				mTrip.setHeadsignDirection(MDirectionType.EAST);
-				return;
-			} else if (gTrip.getDirectionId() == 1) {
-				mTrip.setHeadsignDirection(MDirectionType.WEST);
-				return;
+		if (isGoodEnoughAccepted()) {
+			if (mRoute.getId() == 66l) {
+				if (gTrip.getDirectionId() == 0) {
+					mTrip.setHeadsignDirection(MDirectionType.EAST);
+					return;
+				} else if (gTrip.getDirectionId() == 1) {
+					mTrip.setHeadsignDirection(MDirectionType.WEST);
+					return;
+				}
 			}
 		}
 		System.out.printf("Unexpected trip (unexpected route ID: %s): %s\n", mRoute.getId(), gTrip);
@@ -182,7 +187,6 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	private static final Pattern STARTS_WITH_BOUND = Pattern.compile("(^(east|west|north|south)bound)", Pattern.CASE_INSENSITIVE);
-
 
 	@Override
 	public String cleanStopName(String gStopName) {
