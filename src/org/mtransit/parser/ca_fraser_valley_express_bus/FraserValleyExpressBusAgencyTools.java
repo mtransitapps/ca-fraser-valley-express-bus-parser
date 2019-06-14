@@ -17,8 +17,8 @@ import org.mtransit.parser.mt.data.MRoute;
 import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.mt.data.MTrip;
 
-// https://bctransit.com/*/footer/open-data
-// https://bctransit.com/servlet/bctransit/data/GTFS - FVX
+// https://www.bctransit.com/open-data
+// https://www.bctransit.com/data/gtfs/internet/FVX1907-GTFS-Export_20190611-20190831_v20190611-(2).zip
 public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
