@@ -140,6 +140,16 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 		);
 	}
 
+	@Override
+	public boolean directionFinderEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean mergeHeadsign(@NotNull MTrip mTrip, @NotNull MTrip mTripToMerge) {
+		throw new MTLog.Fatal("%s: Unexpected trips to merges %s & %s!", mTrip.getRouteId(), mTrip, mTripToMerge);
+	}
+
 	@NotNull
 	@Override
 	public String cleanTripHeadsign(@NotNull String tripHeadsign) {
