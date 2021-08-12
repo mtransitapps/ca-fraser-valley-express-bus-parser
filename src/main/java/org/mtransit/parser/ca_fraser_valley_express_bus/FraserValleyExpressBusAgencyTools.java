@@ -19,7 +19,7 @@ import org.mtransit.parser.mt.data.MTrip;
 import java.util.HashSet;
 
 // https://www.bctransit.com/open-data
-// https://www.bctransit.com/data/gtfs/internet/FVX2009-GTFS-20200818-20210906_v20200818.zip
+// https://www.bctransit.com/data/gtfs/internet/FVX2109-GTFS-20210805-202200101_v20210805.zip
 public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(@Nullable String[] args) {
