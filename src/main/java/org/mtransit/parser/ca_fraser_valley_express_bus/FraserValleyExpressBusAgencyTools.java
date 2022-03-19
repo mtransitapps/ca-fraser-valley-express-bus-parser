@@ -10,7 +10,7 @@ import org.mtransit.parser.gtfs.data.GRoute;
 import org.mtransit.parser.mt.data.MAgency;
 
 // https://www.bctransit.com/open-data
-// https://www.bctransit.com/data/gtfs/internet/FVX2109-GTFS-20211208-20220326_v20211208.zip
+// https://www.bctransit.com/data/gtfs/internet/FVX2203_20220327-20220630_v20220316.zip
 public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(@NotNull String[] args) {
