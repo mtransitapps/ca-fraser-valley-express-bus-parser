@@ -27,14 +27,6 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 		return "Fraser Valley Express";
 	}
 
-	private static final String AGENCY_ID = "20"; // Fraser Valley Express only
-
-	@Nullable
-	@Override
-	public String getAgencyId() {
-		return AGENCY_ID;
-	}
-
 	@NotNull
 	@Override
 	public Integer getAgencyRouteType() {
@@ -78,18 +70,14 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 
 	@Nullable
 	@Override
-	public String getRouteColor(@NotNull GRoute gRoute, @NotNull MAgency agency) {
-		if (StringUtils.isEmpty(gRoute.getRouteColor())) {
-			final int rsn = Integer.parseInt(gRoute.getRouteShortName());
-			switch (rsn) {
-			// @formatter:off
-			case 66: return AGENCY_COLOR_BLUE;
-			// @formatter:on
-			default:
-				throw new MTLog.Fatal("Unexpected route color %s!", gRoute);
-			}
+	public String provideMissingRouteColor(@NotNull GRoute gRoute) {
+		switch (gRoute.getRouteShortName()) {
+		// @formatter:off
+		case "66": return AGENCY_COLOR_BLUE;
+		// @formatter:on
+		default:
+			throw new MTLog.Fatal("Unexpected route color %s!", gRoute);
 		}
-		return super.getRouteColor(gRoute, agency);
 	}
 
 	@Override
