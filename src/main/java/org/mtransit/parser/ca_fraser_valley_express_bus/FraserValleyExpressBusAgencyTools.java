@@ -21,6 +21,14 @@ public class FraserValleyExpressBusAgencyTools extends DefaultAgencyTools {
 		return true;
 	}
 
+	@Override
+	public boolean excludeRoute(@NotNull GRoute gRoute) {
+		if (!gRoute.getRouteLongNameOrDefault().contains("FVX")) {
+			return EXCLUDE;
+		}
+		return super.excludeRoute(gRoute);
+	}
+
 	@NotNull
 	@Override
 	public String getAgencyName() {
